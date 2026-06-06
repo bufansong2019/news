@@ -4,20 +4,31 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import DetailBreadcrumb from '@/components/ui/DetailBreadcrumb'
 import SEO from '@/components/ui/SEO'
+import ErrorState from '@/components/ui/ErrorState'
 import { cn } from '@/lib/utils'
+import { useResource } from '@/lib/useResources'
 import { FolderOpen, Download } from 'lucide-react'
-import { resourceDetailMap } from '@/lib/resources'
-
-const resourceCatSlugs: Record<string, string> = {
-  zhenti: '真题试卷',
-  dagang: '考试大纲',
-  lunwen: '论文资料',
-}
-const categoryToSlug = Object.fromEntries(Object.entries(resourceCatSlugs).map(([k, v]) => [v, k]))
+import { pdfUrl, categoryToSlug } from '@/lib/resources'
 
 export default function ResourceDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const resource = id ? resourceDetailMap[id] : undefined
+  const { resource, loading, error, retry } = useResource(id || '')
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 text-center">
+        <p className="text-sm text-muted-foreground">加载中...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+        <ErrorState error={error} onRetry={retry} />
+      </div>
+    )
+  }
 
   if (!resource) {
     return (
@@ -51,7 +62,7 @@ export default function ResourceDetailPage() {
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-sm text-muted-foreground">{resource.size}</span>
           <a
-            href={`/api/pdf/${resource.filename}`}
+            href={`${pdfUrl(resource.filename)}`}
             download
             className={cn(buttonVariants(), 'inline-flex items-center gap-1')}
           >
@@ -61,11 +72,10 @@ export default function ResourceDetailPage() {
         </div>
       </div>
 
-      {/* PDF 在线预览 */}
       <Card>
         <CardContent className="p-0 overflow-hidden rounded-lg" style={{ height: '75vh' }}>
           <iframe
-            src={`/api/pdf/${resource.filename}`}
+            src={`${pdfUrl(resource.filename)}`}
             className="w-full h-full border-0"
             title={resource.title}
           />

@@ -1,5 +1,6 @@
 import { useSearchParams, Link } from 'react-router-dom'
-import { searchArticles } from '@/lib/search'
+import { searchArticles, type SearchResult } from '@/lib/search'
+import { useResources } from '@/lib/useResources'
 import { paginateArticles, slugFromCategory } from '@/lib/content'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -13,8 +14,22 @@ export default function SearchPage() {
   const [searchParams] = useSearchParams()
   const q = searchParams.get('q') || ''
   const page = parseInt(searchParams.get('page') || '1', 10) || 1
-  const results = searchArticles(q)
-  const { items, total } = paginateArticles(results, page, PAGE_SIZE)
+  const { resources } = useResources()
+
+  const articleResults = searchArticles(q)
+  const resourceResults: SearchResult[] = resources
+    .filter(r => !q || r.title.toLowerCase().includes(q.toLowerCase()) || r.category.toLowerCase().includes(q.toLowerCase()))
+    .map(r => ({
+      type: 'resource' as const,
+      slug: r.id,
+      title: r.title,
+      description: r.category,
+      category: r.category,
+      date: r.date,
+    }))
+
+  const allResults = [...articleResults, ...resourceResults]
+  const { items, total } = paginateArticles(allResults, page, PAGE_SIZE)
 
   return (
     <>
@@ -24,7 +39,7 @@ export default function SearchPage() {
         <Search className="h-5 w-5 text-muted-foreground" />
         <h1 className="text-xl font-bold">搜索: &ldquo;{q}&rdquo;</h1>
       </div>
-      <p className="text-sm text-muted-foreground mb-6">共找到 {results.length} 条结果</p>
+      <p className="text-sm text-muted-foreground mb-6">共找到 {allResults.length} 条结果</p>
 
       {items.map((result) => {
         const isArticle = result.type === 'article'
@@ -59,7 +74,7 @@ export default function SearchPage() {
         )
       })}
 
-      {results.length === 0 && q && (
+      {allResults.length === 0 && q && (
         <p className="text-sm text-muted-foreground">没有找到匹配的结果</p>
       )}
 

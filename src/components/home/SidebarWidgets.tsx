@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Card, CardContent } from '@/components/ui/card'
-import { allResources } from '@/lib/resources'
+import { useResources } from '@/lib/useResources'
 import { cn } from '@/lib/utils'
 import TagCloud from '@/components/home/TagCloud'
 import { FileText, Sparkles } from 'lucide-react'
@@ -13,10 +13,11 @@ function calcDaysUntil(target: Date): number {
 }
 
 const examDate = import.meta.env.VITE_EXAM_DATE || '2026-11-07'
-const hotResources = allResources.slice(0, 4)
 
 export default function SidebarWidgets() {
   const [days, setDays] = useState(() => calcDaysUntil(new Date(examDate)))
+  const { resources } = useResources()
+  const hotResources = resources.slice(0, 4)
 
   useEffect(() => {
     const timer = setInterval(() => setDays(calcDaysUntil(new Date(examDate))), 86400000)

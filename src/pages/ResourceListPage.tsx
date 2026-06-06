@@ -1,32 +1,52 @@
 import { useParams, useSearchParams } from 'react-router-dom'
 import ResourceCard from '@/components/resource/ResourceCard'
-import { allResources } from '@/lib/resources'
+import { useResources } from '@/lib/useResources'
 import { paginateArticles } from '@/lib/content'
 import PaginationBar from '@/components/ui/PaginationBar'
 import PageHeader from '@/components/ui/PageHeader'
 import FilterPills from '@/components/ui/FilterPills'
 import SEO from '@/components/ui/SEO'
+import ErrorState from '@/components/ui/ErrorState'
 import { FolderOpen } from 'lucide-react'
+import { resourceCatSlugs, resourceCategories } from '@/lib/resources'
 
 const PAGE_SIZE = 12
-
-const resourceCatSlugs: Record<string, string> = {
-  zhenti: '真题试卷',
-  dagang: '考试大纲',
-  lunwen: '论文资料',
-}
-const resourceCategories = Object.keys(resourceCatSlugs)
 
 export default function ResourceListPage() {
   const { catSlug } = useParams<{ catSlug: string }>()
   const [searchParams] = useSearchParams()
   const page = parseInt(searchParams.get('page') || '1', 10) || 1
+  const { resources, loading, error, retry } = useResources()
 
   const activeCat = catSlug ? resourceCatSlugs[catSlug] || '' : ''
-  const filtered = activeCat ? allResources.filter(r => r.category === activeCat) : allResources
-  const { items: resources, total } = paginateArticles(filtered, page, PAGE_SIZE)
+  const filtered = activeCat ? resources.filter(r => r.category === activeCat) : resources
+  const { items, total } = paginateArticles(filtered, page, PAGE_SIZE)
 
   const pageTitle = activeCat || '资料库'
+
+  if (loading) {
+    return (
+      <>
+        <SEO title={pageTitle} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+          <PageHeader icon={FolderOpen} title="资料库" description="PDF 资料在线阅读与下载" />
+          <p className="text-sm text-muted-foreground">加载中...</p>
+        </div>
+      </>
+    )
+  }
+
+  if (error) {
+    return (
+      <>
+        <SEO title={pageTitle} />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+          <PageHeader icon={FolderOpen} title="资料库" description="PDF 资料在线阅读与下载" />
+          <ErrorState error={error} onRetry={retry} />
+        </div>
+      </>
+    )
+  }
 
   return (
     <>
@@ -46,11 +66,11 @@ export default function ResourceListPage() {
         activeValue={catSlug || ''}
       />
 
-      {resources.length === 0 ? (
+      {items.length === 0 ? (
         <p className="text-sm text-muted-foreground">暂无资料</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {resources.map(item => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.map(item => (
             <ResourceCard key={item.id} resource={item} />
           ))}
         </div>

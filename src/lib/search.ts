@@ -1,6 +1,5 @@
 import MiniSearch from 'minisearch'
 import { allArticles } from '@/lib/content'
-import { allResources } from '@/lib/resources'
 
 export type SearchResult = {
   type: 'article' | 'resource'
@@ -34,11 +33,11 @@ miniSearch.addAll(
   }))
 )
 
-function searchQuery(query: string): SearchResult[] {
+export function searchArticles(query: string): SearchResult[] {
   const q = query.trim().toLowerCase()
   if (!q) return []
 
-  const articleResults = miniSearch.search(q).map(r => ({
+  return miniSearch.search(q).map(r => ({
     type: 'article' as const,
     slug: r.slug as string,
     title: r.title as string,
@@ -46,21 +45,4 @@ function searchQuery(query: string): SearchResult[] {
     category: r.category as string,
     date: r.date as string,
   }))
-
-  const resourceResults = allResources
-    .filter(r => r.title.toLowerCase().includes(q) || r.category.toLowerCase().includes(q))
-    .map(r => ({
-      type: 'resource' as const,
-      slug: r.id,
-      title: r.title,
-      description: r.category,
-      category: r.category,
-      date: r.date,
-    }))
-
-  return [...articleResults, ...resourceResults]
-}
-
-export function searchArticles(query: string): SearchResult[] {
-  return searchQuery(query)
 }

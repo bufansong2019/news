@@ -25,7 +25,7 @@ function slugFromPath(path: string): string {
   return path.replace(/\\/g, '/').split('/').pop()?.replace(/\.md$/, '') ?? ''
 }
 
-const modules = import.meta.glob('/src/content/**/*.md', {
+const modules = import.meta.glob('/src/contents/**/*.md', {
   eager: true,
   query: '?raw',
   import: 'default',

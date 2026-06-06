@@ -1,0 +1,14 @@
+name = "ruankao-station"
+compatibility_date = "2026-05-03"
+
+# Pages 构建配置
+pages_build_output_dir = "dist"
+
+[vars]
+SITE_NAME = "软考通备考资讯站"
+VITE_EXAM_DATE = "2026-11-07"
+
+# R2 存储桶绑定 (供 Pages Functions 使用)
+[[r2_buckets]]
+binding = "R2"
+bucket_name = "ruankao-pdf"

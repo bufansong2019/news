@@ -43,6 +43,7 @@ export const allArticles: Article[] = Object.entries(modules).map(([path, raw]) 
     slug: data.slug as string | undefined,
     sticky: data.sticky === 'true',
     featured: data.featured === 'true',
+    mustread: data.mustread === 'true',
   }
   const slug = frontmatter.slug || slugFromPath(path)
   return { slug, frontmatter, content }
@@ -90,10 +91,9 @@ export function getCategories(): string[] {
 }
 
 const categorySlugMap: Record<string, string> = {
-  'news': '情报速递',
+  'news': '软考资讯',
   'guide': '备考攻略',
-  'essence': '知识精粹',
-  'essay': '实战论文',
+  'other': '其他内容',
 }
 
 const slugToCategory: Record<string, string> = Object.fromEntries(
@@ -113,10 +113,9 @@ export function slugFromCategory(category: string): string {
 }
 
 export const categoryColors: Record<string, string> = {
-  '情报速递': 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300',
+  '软考资讯': 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300',
   '备考攻略': 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
-  '知识精粹': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
-  '实战论文': 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300',
+  '其他内容': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300',
 }
 
 export function getAllTags(): { tag: string; count: number }[] {

@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom'
 import { getArticleBySlug, getArticleByCategoryAndSlug, categoryFromSlug, categoryColors } from '@/lib/content'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import DetailBreadcrumb from '@/components/ui/DetailBreadcrumb'
 import SEO from '@/components/ui/SEO'
@@ -47,15 +46,28 @@ export default function ArticlePage() {
       <article>
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
-            {frontmatter.sticky && <span className="text-[11px] px-[6px] py-[2px] rounded font-medium bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">置顶</span>}
-            {frontmatter.featured && <span className="text-[11px] px-[6px] py-[2px] rounded font-medium bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">精华</span>}
-            <h1 className="text-2xl font-bold">{frontmatter.title}</h1>
+            <h1 className="text-2xl font-bold min-w-0">{frontmatter.title}</h1>
+          </div>
+          <div className="flex sm:hidden items-center gap-2 mb-2">
+            <span className={`text-[11px] px-[6px] py-[2px] rounded font-medium ${categoryColors[frontmatter.category] || 'bg-muted text-muted-foreground'}`}>
+              {frontmatter.category}
+            </span>
+            <span className="text-xs text-muted-foreground">{frontmatter.date}</span>
           </div>
           <p className="text-muted-foreground text-sm">{frontmatter.description}</p>
-          {frontmatter.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-3">
+          {(frontmatter.tags.length > 0 || frontmatter.sticky || frontmatter.featured || frontmatter.mustread) && (
+            <div className="flex flex-wrap items-center gap-2 mt-3">
+              {frontmatter.sticky && <span className="shrink-0 text-[11px] px-[6px] py-[2px] rounded font-medium bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300">置顶</span>}
+              {frontmatter.featured && <span className="shrink-0 text-[11px] px-[6px] py-[2px] rounded font-medium bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">精华</span>}
+              {frontmatter.mustread && <span className="shrink-0 text-[11px] px-[6px] py-[2px] rounded font-medium bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">必读</span>}
               {frontmatter.tags.map(tag => (
-                <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
+                <Link
+                  key={tag}
+                  to={`/search?q=${encodeURIComponent(tag)}`}
+                  className="inline-flex h-5 items-center rounded-full border border-border px-2 py-0.5 text-xs font-medium text-foreground no-underline hover:bg-muted hover:text-muted-foreground transition-colors"
+                >
+                  {tag}
+                </Link>
               ))}
             </div>
           )}

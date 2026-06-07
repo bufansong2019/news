@@ -6,9 +6,8 @@ export function pdfUrl(filename: string): string {
 
 export const resourceCatSlugs: Record<string, string> = {
   zhenti: '真题试卷',
-  dagang: '考试大纲',
-  lunwen: '论文资料',
-  zhinan: '报考指南',
+  beikao: '备考教材',
+  other: '其他资料',
 }
 
 export const resourceCategories = Object.keys(resourceCatSlugs)

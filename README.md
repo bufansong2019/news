@@ -48,7 +48,7 @@ npm run build
 ---
 title: 文章标题
 date: 2026-06-05
-category: 情报速递       # 情报速递 | 备考攻略 | 知识精粹 | 实战论文
+category: 软考资讯       # 软考资讯 | 备考攻略 | 其他内容
 tags: [标签1, 标签2]
 description: 摘要文字
 sticky: true             # 可选，置顶

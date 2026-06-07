@@ -1,7 +1,7 @@
 ---
 title: 挣值分析（EVM）公式全梳理
 date: 2026-05-20
-category: 知识精粹
+category: 其他内容
 tags: [高项, 计算, EVM, 项目管理, 案例]
 description: 高项下午案例必考内容，PV/EV/AC/SV/CV/SPI/CPI 公式一网打尽。
 ---

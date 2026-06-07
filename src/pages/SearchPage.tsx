@@ -5,8 +5,10 @@ import { paginateArticles, slugFromCategory } from '@/lib/content'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import PaginationBar from '@/components/ui/PaginationBar'
+import PageHeader from '@/components/ui/PageHeader'
+import EmptyState from '@/components/ui/EmptyState'
 import SEO from '@/components/ui/SEO'
-import { Search, Newspaper, FileText } from 'lucide-react'
+import { Search, SearchX, Newspaper, FileText } from 'lucide-react'
 
 const PAGE_SIZE = 10
 
@@ -35,11 +37,11 @@ export default function SearchPage() {
     <>
       <SEO title={q ? `搜索: ${q}` : '搜索'} description={`搜索"${q}"的结果`} />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-      <div className="flex items-center gap-2 mb-2">
-        <Search className="h-5 w-5 text-muted-foreground" />
-        <h1 className="text-xl font-bold">搜索: &ldquo;{q}&rdquo;</h1>
-      </div>
-      <p className="text-sm text-muted-foreground mb-6">共找到 {allResults.length} 条结果</p>
+      <PageHeader
+        icon={Search}
+        title={q ? `搜索: "${q}"` : '搜索'}
+        description={`共找到 ${allResults.length} 条结果`}
+      />
 
       {items.map((result) => {
         const isArticle = result.type === 'article'
@@ -75,7 +77,7 @@ export default function SearchPage() {
       })}
 
       {allResults.length === 0 && q && (
-        <p className="text-sm text-muted-foreground">没有找到匹配的结果</p>
+        <EmptyState icon={SearchX} title="没有找到匹配的结果" description="试试其他关键词" />
       )}
 
       <PaginationBar current={page} total={total} baseUrl={`/search?q=${encodeURIComponent(q)}`} />

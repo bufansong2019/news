@@ -14,7 +14,7 @@ export default function ResourceCard({ resource }: { resource: ResourceData }) {
             </div>
             <div className="min-w-0 flex-1">
               <div className="text-xs text-muted-foreground mb-1">{resource.category}</div>
-              <h3 className="text-sm font-semibold mb-2 line-clamp-2">{resource.title}</h3>
+              <h3 className="text-sm font-semibold mb-1 line-clamp-2">{resource.title}</h3>
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span>{resource.size}</span>
                 <span>{resource.date}</span>

@@ -5,6 +5,7 @@ import PaginationBar from '@/components/ui/PaginationBar'
 import PageHeader from '@/components/ui/PageHeader'
 import FilterPills from '@/components/ui/FilterPills'
 import SEO from '@/components/ui/SEO'
+import EmptyState from '@/components/ui/EmptyState'
 import { Newspaper } from 'lucide-react'
 
 const PAGE_SIZE = 10
@@ -53,7 +54,7 @@ export default function CategoryPage() {
       />
 
       {articles.length === 0 && (
-        <p className="text-muted-foreground text-sm">暂无文章</p>
+        <EmptyState icon={Newspaper} title="暂无文章" description="该分类下还没有文章" />
       )}
       {articles.map(article => (
         <ArticleCard key={article.slug} article={article} />

@@ -17,7 +17,7 @@ const examDate = import.meta.env.VITE_EXAM_DATE || '2026-11-07'
 export default function SidebarWidgets() {
   const [days, setDays] = useState(() => calcDaysUntil(new Date(examDate)))
   const { resources } = useResources()
-  const hotResources = resources.slice(0, 4)
+  const hotResources = resources.slice(0, 5)
 
   useEffect(() => {
     const timer = setInterval(() => setDays(calcDaysUntil(new Date(examDate))), 86400000)
@@ -71,10 +71,10 @@ export default function SidebarWidgets() {
         </CardContent>
       </Card>
 
-      {/* 热门资料下载 */}
+      {/* 最新资料 */}
       <Card>
         <CardContent className="p-6">
-          <h3 className="text-[18px] font-semibold mb-5">热门资料下载</h3>
+          <h3 className="text-[18px] font-semibold mb-5">最新资料</h3>
           <div className="space-y-3">
             {hotResources.map(item => (
               <Link

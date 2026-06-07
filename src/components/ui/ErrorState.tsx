@@ -1,3 +1,4 @@
+import type React from 'react'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { TriangleAlert, RefreshCw } from 'lucide-react'
@@ -6,9 +7,10 @@ interface ErrorStateProps {
   error: string
   onRetry?: () => void
   title?: string
+  children?: React.ReactNode
 }
 
-export default function ErrorState({ error, onRetry, title = '加载失败' }: ErrorStateProps) {
+export default function ErrorState({ error, onRetry, title = '加载失败', children }: ErrorStateProps) {
   return (
     <div className="flex flex-col items-center py-16">
       <TriangleAlert className="h-10 w-10 text-red-400 mb-4" />
@@ -20,6 +22,7 @@ export default function ErrorState({ error, onRetry, title = '加载失败' }: E
           重试
         </button>
       )}
+      {children}
     </div>
   )
 }

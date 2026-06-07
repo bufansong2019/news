@@ -24,7 +24,7 @@ export default function DetailBreadcrumb({
   const navigate = useNavigate()
 
   return (
-    <div className="flex items-center justify-between gap-4 mb-6">
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-4 mb-6">
       <div className="flex items-center gap-1 min-w-0">
         <button
           onClick={() => navigate(-1)}
@@ -51,7 +51,7 @@ export default function DetailBreadcrumb({
         </nav>
       </div>
       {children && (
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="hidden sm:flex items-center gap-2 shrink-0">
           {children}
         </div>
       )}

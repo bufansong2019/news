@@ -8,6 +8,7 @@ export interface ArticleFrontmatter {
   slug?: string
   sticky?: boolean
   featured?: boolean
+  mustread?: boolean
 }
 
 export interface Article {

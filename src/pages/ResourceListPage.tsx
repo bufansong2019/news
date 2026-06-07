@@ -7,6 +7,7 @@ import PageHeader from '@/components/ui/PageHeader'
 import FilterPills from '@/components/ui/FilterPills'
 import SEO from '@/components/ui/SEO'
 import ErrorState from '@/components/ui/ErrorState'
+import EmptyState from '@/components/ui/EmptyState'
 import { FolderOpen } from 'lucide-react'
 import { resourceCatSlugs, resourceCategories } from '@/lib/resources'
 
@@ -67,7 +68,7 @@ export default function ResourceListPage() {
       />
 
       {items.length === 0 ? (
-        <p className="text-sm text-muted-foreground">暂无资料</p>
+        <EmptyState icon={FolderOpen} title="暂无资料" description="该分类下还没有资料" />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map(item => (

@@ -25,7 +25,7 @@ jobs:
             [ -f "$file" ] || continue
             filename=$(basename "$file")
             echo "Uploading: $filename"
-            npx --yes wrangler@latest r2 object put public-bucket/news/"$filename" --file="$file"
+            npx --yes wrangler@latest r2 object put public-bucket/news/"$filename" --file="$file" --remote
           done
 
       - name: Clean stale objects
@@ -42,5 +42,5 @@ jobs:
           python3 .github/workflows/sync_gen_resources.py
           if [ -f resources.json ]; then
             echo "Uploading resources.json to R2..."
-            npx --yes wrangler@latest r2 object put public-bucket/news/resources.json --file=resources.json
+            npx --yes wrangler@latest r2 object put public-bucket/news/resources.json --file=resources.json --remote
           fi

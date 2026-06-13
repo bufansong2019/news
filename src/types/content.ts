@@ -9,6 +9,7 @@ export interface ArticleFrontmatter {
   sticky?: boolean
   featured?: boolean
   mustread?: boolean
+  subject?: string
 }
 
 export interface Article {

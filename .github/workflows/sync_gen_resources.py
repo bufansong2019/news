@@ -40,6 +40,8 @@ for filename, info in meta.items():
         'filename': filename,
         'size': size,
         'date': datestr,
+        'featured': info.get('featured', False),
+        'subject': info.get('subject', ''),
     })
 
 resources.sort(key=lambda r: r['date'], reverse=True)

@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import DetailBreadcrumb from '@/components/ui/DetailBreadcrumb'
 import SEO from '@/components/ui/SEO'
 import ErrorState from '@/components/ui/ErrorState'
+import LoadingState from '@/components/ui/LoadingState'
 import { cn } from '@/lib/utils'
 import { useResource } from '@/lib/useResources'
 import { FolderOpen, Download, FileText, ExternalLink } from 'lucide-react'
@@ -15,8 +16,8 @@ export default function ResourceDetailPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 text-center">
-        <p className="text-sm text-muted-foreground">加载中...</p>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+        <LoadingState />
       </div>
     )
   }

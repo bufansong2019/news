@@ -1,13 +1,14 @@
 import { useParams, useSearchParams } from 'react-router-dom'
 import ResourceCard from '@/components/resource/ResourceCard'
 import { useResources } from '@/lib/useResources'
-import { paginateArticles } from '@/lib/content'
+import { paginateArticles, subjectFromSlug, getSubjectSlugs } from '@/lib/content'
 import PaginationBar from '@/components/ui/PaginationBar'
 import PageHeader from '@/components/ui/PageHeader'
 import FilterPills from '@/components/ui/FilterPills'
 import SEO from '@/components/ui/SEO'
 import ErrorState from '@/components/ui/ErrorState'
 import EmptyState from '@/components/ui/EmptyState'
+import LoadingState from '@/components/ui/LoadingState'
 import { FolderOpen } from 'lucide-react'
 import { resourceCatSlugs, resourceCategories } from '@/lib/resources'
 
@@ -18,12 +19,48 @@ export default function ResourceListPage() {
   const [searchParams] = useSearchParams()
   const page = parseInt(searchParams.get('page') || '1', 10) || 1
   const { resources, loading, error, retry } = useResources()
+  const activeSubject = searchParams.get('subject') || ''
 
   const activeCat = catSlug ? resourceCatSlugs[catSlug] || '' : ''
-  const filtered = activeCat ? resources.filter(r => r.category === activeCat) : resources
+  let filtered = activeCat ? resources.filter(r => r.category === activeCat) : resources
+
+  if (activeSubject) {
+    const subjectName = subjectFromSlug(activeSubject)
+    if (subjectName) {
+      filtered = filtered.filter(r => r.subject === subjectName)
+    }
+  }
+
   const { items, total } = paginateArticles(filtered, page, PAGE_SIZE)
 
   const pageTitle = activeCat || '资料库'
+
+  function resBaseUrl() {
+    let url = catSlug ? `/resources/category/${catSlug}` : '/resources'
+    if (activeSubject) url += `?subject=${activeSubject}`
+    return url
+  }
+
+  function subjectHref(subject: string) {
+    const params = new URLSearchParams(searchParams)
+    if (subject) {
+      params.set('subject', subject)
+    } else {
+      params.delete('subject')
+    }
+    params.delete('page')
+    const qs = params.toString()
+    if (!catSlug) return `/resources${qs ? '?' + qs : ''}`
+    return `/resources/category/${catSlug}${qs ? '?' + qs : ''}`
+  }
+
+  function categoryHref(cat: string) {
+    const params = new URLSearchParams(searchParams)
+    params.delete('page')
+    const qs = params.toString()
+    const base = cat ? `/resources/category/${cat}` : '/resources'
+    return qs ? `${base}?${qs}` : base
+  }
 
   if (loading) {
     return (
@@ -31,7 +68,7 @@ export default function ResourceListPage() {
         <SEO title={pageTitle} />
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
           <PageHeader icon={FolderOpen} title="资料库" description="PDF 资料在线阅读与下载" />
-          <p className="text-sm text-muted-foreground">加载中...</p>
+          <LoadingState />
         </div>
       </>
     )
@@ -57,14 +94,26 @@ export default function ResourceListPage() {
 
       <FilterPills
         items={[
-          { label: '全部', href: '/resources', value: '' },
+          { label: '全部', href: categoryHref(''), value: '' },
           ...resourceCategories.map(slug => ({
             label: resourceCatSlugs[slug],
-            href: `/resources/category/${slug}`,
+            href: categoryHref(slug),
             value: slug,
           })),
         ]}
         activeValue={catSlug || ''}
+      />
+
+      <FilterPills
+        items={[
+          { label: '全部', href: subjectHref(''), value: '' },
+          ...getSubjectSlugs().map(s => ({
+            label: subjectFromSlug(s)!,
+            href: subjectHref(s),
+            value: s,
+          })),
+        ]}
+        activeValue={activeSubject}
       />
 
       {items.length === 0 ? (
@@ -77,7 +126,7 @@ export default function ResourceListPage() {
         </div>
       )}
 
-      <PaginationBar current={page} total={total} baseUrl={catSlug ? `/resources/category/${catSlug}` : '/resources'} />
+      <PaginationBar current={page} total={total} baseUrl={resBaseUrl()} />
       </div>
     </>
   )

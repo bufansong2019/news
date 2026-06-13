@@ -44,6 +44,7 @@ export const allArticles: Article[] = Object.entries(modules).map(([path, raw]) 
     sticky: data.sticky === 'true',
     featured: data.featured === 'true',
     mustread: data.mustread === 'true',
+    subject: data.subject as string | undefined,
   }
   const slug = frontmatter.slug || slugFromPath(path)
   return { slug, frontmatter, content }
@@ -86,10 +87,6 @@ export function articleUrl(article: Article): string {
   return catSlug ? `/category/${catSlug}/${article.slug}` : `/article/${article.slug}`
 }
 
-export function getCategories(): string[] {
-  return [...new Set(allArticles.map(a => a.frontmatter.category))]
-}
-
 const categorySlugMap: Record<string, string> = {
   'news': '软考资讯',
   'guide': '备考攻略',
@@ -110,6 +107,20 @@ export function categoryFromSlug(slug: string): string | undefined {
 
 export function slugFromCategory(category: string): string {
   return slugToCategory[category] || category
+}
+
+export const subjectSlugMap: Record<string, string> = {
+  'software-designer': '软件设计师 [中级]',
+}
+
+export const subjectSlugs = Object.keys(subjectSlugMap)
+
+export function getSubjectSlugs(): string[] {
+  return subjectSlugs
+}
+
+export function subjectFromSlug(slug: string): string | undefined {
+  return subjectSlugMap[slug]
 }
 
 export const categoryColors: Record<string, string> = {

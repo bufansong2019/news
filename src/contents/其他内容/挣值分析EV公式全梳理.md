@@ -4,6 +4,7 @@ date: 2026-05-20
 category: 其他内容
 tags: [高项, 计算, EVM, 项目管理, 案例]
 description: 高项下午案例必考内容，PV/EV/AC/SV/CV/SPI/CPI 公式一网打尽。
+subject: 信息系统项目管理师
 ---
 
 ## 基本术语

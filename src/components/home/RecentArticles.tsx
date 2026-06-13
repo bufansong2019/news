@@ -3,6 +3,7 @@ import { getDateSortedArticles } from '@/lib/content'
 import ArticleCard from '@/components/article/ArticleCard'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowRight } from 'lucide-react'
+import EmptyState from '@/components/ui/EmptyState'
 
 export default function RecentArticles() {
   const articles = getDateSortedArticles().slice(0, 5)
@@ -17,7 +18,7 @@ export default function RecentArticles() {
           </Link>
         </div>
         {articles.length === 0 ? (
-          <p className="text-xs text-muted-foreground text-center py-4">暂无文章</p>
+          <EmptyState title="暂无文章" />
         ) : (
           articles.map(article => (
             <ArticleCard key={article.slug} article={article} />

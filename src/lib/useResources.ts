@@ -7,6 +7,9 @@ export interface ResourceData {
   filename: string
   size: string
   date: string
+  featured?: boolean
+  description?: string
+  subject?: string
 }
 
 const RESOURCES_URL = 'https://public.f1sh.org/news/resources.json'

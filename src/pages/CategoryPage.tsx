@@ -1,11 +1,12 @@
 import { useParams, useSearchParams } from 'react-router-dom'
-import { getArticlesByCategory, getSortedArticles, paginateArticles, categoryFromSlug, getCategorySlugs } from '@/lib/content'
+import { getArticlesByCategory, getSortedArticles, paginateArticles, categoryFromSlug, getCategorySlugs, getSubjectSlugs, subjectFromSlug } from '@/lib/content'
 import ArticleCard from '@/components/article/ArticleCard'
 import PaginationBar from '@/components/ui/PaginationBar'
 import PageHeader from '@/components/ui/PageHeader'
 import FilterPills from '@/components/ui/FilterPills'
 import SEO from '@/components/ui/SEO'
 import EmptyState from '@/components/ui/EmptyState'
+import ErrorState from '@/components/ui/ErrorState'
 import { Newspaper } from 'lucide-react'
 
 const PAGE_SIZE = 10
@@ -19,24 +20,58 @@ export default function CategoryPage() {
   const { slug } = useParams<{ slug: string }>()
   const [searchParams] = useSearchParams()
   const page = parseInt(searchParams.get('page') || '1', 10) || 1
+  const activeSubject = searchParams.get('subject') || ''
 
   const categoryName = slug ? categoryFromSlug(slug) : undefined
-  const all = categoryName ? getArticlesByCategory(categoryName) : getSortedArticles()
+  let all = categoryName ? getArticlesByCategory(categoryName) : getSortedArticles()
+
+  if (activeSubject) {
+    const subjectName = subjectFromSlug(activeSubject)
+    if (subjectName) {
+      all = all.filter(a => a.frontmatter.subject === subjectName)
+    }
+  }
 
   const { items: articles, total } = paginateArticles(all, page, PAGE_SIZE)
-  const baseUrl = slug ? `/category/${slug}` : '/category'
+
+  function makeBaseUrl(categorySlug: string | undefined) {
+    let url = categorySlug ? `/category/${categorySlug}` : '/category'
+    if (activeSubject) url += `?subject=${activeSubject}`
+    return url
+  }
+  const baseUrl = makeBaseUrl(slug)
 
   if (slug && !categoryName) {
     return (
       <>
         <SEO title="分类不存在" />
-        <p className="text-sm text-muted-foreground p-8">分类不存在</p>
+        <ErrorState title="分类不存在" error="请检查链接是否正确" />
       </>
     )
   }
 
   const pageTitle = categoryName || '资讯'
   const pageDesc = categoryName ? `${categoryName}分类下的软考备考文章` : '软考备考资讯 · 政策通知 · 学习经验'
+
+  function subjectHref(subject: string) {
+    const params = new URLSearchParams(searchParams)
+    if (subject) {
+      params.set('subject', subject)
+    } else {
+      params.delete('subject')
+    }
+    params.delete('page')
+    const qs = params.toString()
+    return slug ? `/category/${slug}${qs ? '?' + qs : ''}` : `/category${qs ? '?' + qs : ''}`
+  }
+
+  function categoryHref(catSlug: string) {
+    const params = new URLSearchParams(searchParams)
+    params.delete('page')
+    const qs = params.toString()
+    const base = catSlug ? `/category/${catSlug}` : '/category'
+    return qs ? `${base}?${qs}` : base
+  }
 
   return (
     <>
@@ -47,10 +82,22 @@ export default function CategoryPage() {
       <FilterPills
         items={filterTabs.map(tab => ({
           label: tab.label,
-          href: tab.value ? `/category/${tab.value}` : '/category',
+          href: categoryHref(tab.value),
           value: tab.value,
         }))}
         activeValue={slug || ''}
+      />
+
+      <FilterPills
+        items={[
+          { label: '全部', href: subjectHref(''), value: '' },
+          ...getSubjectSlugs().map(s => ({
+            label: subjectFromSlug(s)!,
+            href: subjectHref(s),
+            value: s,
+          })),
+        ]}
+        activeValue={activeSubject}
       />
 
       {articles.length === 0 && (

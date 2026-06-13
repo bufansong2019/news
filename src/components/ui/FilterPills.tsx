@@ -15,7 +15,7 @@ interface FilterPillsProps {
 
 export default function FilterPills({ items, activeValue }: FilterPillsProps) {
   return (
-    <div className="flex flex-wrap gap-1.5 mb-6">
+    <div className="flex gap-1.5 mb-6 overflow-x-auto flex-nowrap sm:flex-wrap [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
       {items.map(item => (
         <Link
           key={item.value}
